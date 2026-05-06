@@ -1,0 +1,10 @@
+name = "text-to-image-web"
+type = "javascript-next"
+workers_dev = true
+
+[site]
+bucket = "./"
+
+[vars]
+TENCENT_SECRET_ID = ""
+TENCENT_SECRET_KEY = ""

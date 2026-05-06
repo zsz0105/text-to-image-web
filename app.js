@@ -227,18 +227,18 @@ async function callStability({ prompt, negPrompt, size, count, apiKey }) {
   return results;
 }
 
-/* ===== 腾讯混元（Vercel Serverless 代理） ===== */
+/* ===== 腾讯混元（Cloudflare Pages Functions 代理） ===== */
 async function callTencent({ prompt, negPrompt, size, count, apiKey }) {
   const res = await fetch('/api/tencent', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, negPrompt, size, count }),
+    body: JSON.stringify({ prompt, size, count }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   // 腾讯云返回的是 Base64 图片数据
-  if (data.ResultImage) {
-    return [data.ResultImage];
+  if (data.Response?.ResultImage) {
+    return ['data:image/png;base64,' + data.Response.ResultImage];
   }
   return data.images || [];
 }

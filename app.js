@@ -227,17 +227,19 @@ async function callStability({ prompt, negPrompt, size, count, apiKey }) {
   return results;
 }
 
-/* ===== 腾讯混元（需后端代理，此处预留） ===== */
-async function callTencent({ prompt, size, count, apiKey }) {
-  // 腾讯云签名复杂，需要后端代理
-  // 此处调用本地后端接口
-  const res = await fetch('/api/tencent/text2image', {
+/* ===== 腾讯混元（Vercel Serverless 代理） ===== */
+async function callTencent({ prompt, negPrompt, size, count, apiKey }) {
+  const res = await fetch('/api/tencent', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, size, count, apiKey }),
+    body: JSON.stringify({ prompt, negPrompt, size, count }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
+  // 腾讯云返回的是 Base64 图片数据
+  if (data.ResultImage) {
+    return [data.ResultImage];
+  }
   return data.images || [];
 }
 
